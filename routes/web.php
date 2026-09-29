@@ -1,46 +1,43 @@
 <?php
 
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\ImageNotDIController;
+use App\Http\Controllers\ProductController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', 'App\Http\Controllers\HomeController@index')->name('home.index');
+$basePath = '/';
+$aboutPath = 'about';
+$contactPath = 'contact';
+$productPath = 'products';
+$cartPath = 'cart';
+$imagePath = 'image';
+$imageNotDiPath = 'image-not-di';
+$createPath = 'create';
+$savePath = 'save';
+$addPath = 'add';
+$removeAllPath = 'removeAll';
+$idPath = '{id}';
 
-Route::get('/about', function () {
-    $data1 = 'About us - Online Store';
-    $data2 = 'About us';
-    $description = 'This is an about page ...';
-    $author = 'Developed by: Ana Sofia Angarita';
+Route::get($basePath, [HomeController::class, 'index'])->name('home.index');
+Route::get($basePath.$aboutPath, [HomeController::class, 'about'])->name('home.about');
+Route::get($basePath.$contactPath, [HomeController::class, 'contact'])->name('home.contact');
 
-    return view('home.about')->with('title', $data1)
-        ->with('subtitle', $data2)
-        ->with('description', $description)
-        ->with('author', $author);
-})->name('home.about');
+Route::get($basePath.$productPath, [ProductController::class, 'index'])->name('product.index');
+Route::get($basePath.$productPath.'/'.$createPath, [ProductController::class, 'create'])->name('product.create');
+Route::post($basePath.$productPath.'/'.$savePath, [ProductController::class, 'save'])->name('product.save');
+Route::get($basePath.$productPath.'/'.$idPath, [ProductController::class, 'show'])->name('product.show')->whereNumber('id');
 
-Route::get('/contact', function () {
-    $data1 = 'Contact us - Online Store';
-    $data2 = 'Contact us';
-    $address = 'Address: Carrera 76 A #1-91, Medellín';
-    $phone = 'Phone: +57 3136388638';
+Route::get($basePath.$cartPath, [CartController::class, 'index'])->name('cart.index');
+Route::post($basePath.$cartPath.'/'.$addPath.'/'.$idPath, [CartController::class, 'add'])->name('cart.add')->whereNumber('id');
+Route::delete($basePath.$cartPath.'/'.$removeAllPath, [CartController::class, 'removeAll'])->name('cart.removeAll');
 
-    return view('home.contact')->with('title', $data1)
-        ->with('subtitle', $data2)
-        ->with('address', $address)
-        ->with('phone', $phone);
-})->name('home.contact');
+Route::get($basePath.$imagePath, [ImageController::class, 'index'])->name('image.index');
+Route::post($basePath.$imagePath.'/'.$savePath, [ImageController::class, 'save'])->name('image.save');
 
-Route::get('/products', 'App\Http\Controllers\ProductController@index')->name('product.index');
-Route::get('/products/create', 'App\Http\Controllers\ProductController@create')->name('product.create');
-Route::post('/products/save', 'App\Http\Controllers\ProductController@save')->name('product.save');
-Route::get('/products/{id}', 'App\Http\Controllers\ProductController@show')->name('product.show');
-
-Route::get('/cart', 'App\Http\Controllers\CartController@index')->name('cart.index');
-Route::get('/cart/add/{id}', 'App\Http\Controllers\CartController@add')->name('cart.add');
-Route::get('/cart/removeAll/', 'App\Http\Controllers\CartController@removeAll')->name('cart.removeAll');
-
-Route::get('/image', 'App\Http\Controllers\ImageController@index')->name('image.index');
-Route::post('/image/save', 'App\Http\Controllers\ImageController@save')->name('image.save');
-
-Route::get('/image-not-di', 'App\Http\Controllers\ImageNotDIController@index')->name('imagenotdi.index');
-Route::post('/image-not-di/save', 'App\Http\Controllers\ImageNotDIController@save')->name('imagenotdi.save');
+Route::get($basePath.$imageNotDiPath, [ImageNotDIController::class, 'index'])->name('imagenotdi.index');
+Route::post($basePath.$imageNotDiPath.'/'.$savePath, [ImageNotDIController::class, 'save'])->name('imagenotdi.save');
 
 Auth::routes();

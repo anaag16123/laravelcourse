@@ -3,18 +3,16 @@
 namespace App\Utils;
 
 use App\Interfaces\ImageStorage;
-use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class ImageLocalStorage implements ImageStorage
 {
-    public function store(Request $request): void
+    public function store(UploadedFile $image): void
     {
-        if ($request->hasFile('profile_image')) {
-            Storage::disk('public')->put(
-                'test.png',
-                file_get_contents($request->file('profile_image')->getRealPath())
-            );
-        }
+        Storage::disk('public')->put(
+            'test.png',
+            file_get_contents($image->getRealPath())
+        );
     }
 }

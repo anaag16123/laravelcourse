@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\CartData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -10,17 +11,13 @@ class CartController extends Controller
 {
     public function index(Request $request): View
     {
-        $products = []; // this simulates the database
-        $products[121] = ['name' => 'Tv samsung', 'price' => '1000'];
-        $products[11] = ['name' => 'Iphone', 'price' => '2000'];
+        $products = CartData::getProducts();
+        $cartProductData = $request->session()->get('cart_product_data', []);
 
         $cartProducts = [];
-        $cartProductData = $request->session()->get('cart_product_data'); // we get the products stored in session
-        if ($cartProductData) {
-            foreach (array_keys($cartProductData) as $key) {
-                if (isset($products[$key])) {
-                    $cartProducts[$key] = $products[$key];
-                }
+        foreach (array_keys($cartProductData) as $key) {
+            if (isset($products[$key])) {
+                $cartProducts[$key] = $products[$key];
             }
         }
 
@@ -33,9 +30,9 @@ class CartController extends Controller
         return view('cart.index')->with('viewData', $viewData);
     }
 
-    public function add(string $id, Request $request): RedirectResponse
+    public function add(Request $request, int $id): RedirectResponse
     {
-        $cartProductData = $request->session()->get('cart_product_data');
+        $cartProductData = $request->session()->get('cart_product_data', []);
         $cartProductData[$id] = $id;
         $request->session()->put('cart_product_data', $cartProductData);
 
